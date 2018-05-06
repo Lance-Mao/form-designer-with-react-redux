@@ -60,11 +60,21 @@ class Forms extends Component {
         this.setState({
             value: e.target.value,
         });
+    };
+    delThisItem(key){
+        let formElements = this.state.formElements.splice(key,1);
+        this.setState({
+            ormElements: formElements
+        })
     }
+
 
     render() {
         console.log("数组长度",this.state.formElements);
-        let elems = this.state.formElements.length !== 0 ? this.state.formElements.map((item, i) => <FormElement key={i} type={item}/>) : ""
+        let elems = this.state.formElements.length !== 0
+            ? this.state.formElements.map((item, i) =>
+                <FormElement index={i} key={i} type={item} delItem={this.delThisItem.bind(this)}/>)
+            : "";
         return (
             <Form layout="horizontal" onSubmit={this.handleSubmit}>
                 <FormItem>
