@@ -28,9 +28,27 @@ class FormElement extends Component {
         let item;
 
         if (type === 1) {
-            item = <FormItem {...formItemLayout} label="文本"> <Input style={{width:'30%'}}/> <Button onClick={this.delItem.bind(this)} type="danger">删除</Button> </FormItem>;
+            item = <FormItem
+                {...formItemLayout}
+                label="文本">
+                <Input style={{width:'30%'}}/>
+                {this.props.switchingViewsStatus ?
+                <Button onClick={this.delItem.bind(this)}
+                        type="danger">删除
+                </Button>
+                    : ""}
+            </FormItem>;
         } else {
-            item = <FormItem {...formItemLayout} label="时间"> <DatePicker style={{width:'30%'}} /> <Button onClick={this.delItem.bind(this)} type="danger">删除</Button> </FormItem>;
+            item = <FormItem
+                {...formItemLayout}
+                label="时间">
+                <DatePicker style={{width:'30%'}} />
+                {this.props.switchingViewsStatus ?
+                <Button onClick={this.delItem.bind(this)}
+                        type="danger">删除
+                </Button>
+                    : ""}
+            </FormItem>;
         }
         return (
             <div>

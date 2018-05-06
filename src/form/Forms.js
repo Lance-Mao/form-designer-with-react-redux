@@ -18,7 +18,8 @@ class Forms extends Component {
                 visible: false,
                 value: 1,
                 preview: true,
-                formElements: []
+                formElements: [],
+                switchingViewsStatus: true
             };
     }
 
@@ -37,8 +38,6 @@ class Forms extends Component {
         });
     }
     handleOk = (e) => {
-        console.log("aaa", this.state.value);
-
         let elem = this.state.value;
 
         let formElements = this.state.formElements;
@@ -61,24 +60,47 @@ class Forms extends Component {
             value: e.target.value,
         });
     };
-    delThisItem(key){
-        let formElements = this.state.formElements.splice(key,1);
+
+    delThisItem(key) {
+        let formElements = this.state.formElements.splice(key, 1);
         this.setState({
             ormElements: formElements
         })
     }
 
+    switchingViews() {
+        let switchingViewsStatus = this.state.switchingViewsStatus;
+        this.setState({
+            switchingViewsStatus: !switchingViewsStatus
+        })
+    }
+
 
     render() {
-        console.log("数组长度",this.state.formElements);
         let elems = this.state.formElements.length !== 0
             ? this.state.formElements.map((item, i) =>
-                <FormElement index={i} key={i} type={item} delItem={this.delThisItem.bind(this)}/>)
+                <FormElement
+                    index={i}
+                    switchingViewsStatus={this.state.switchingViewsStatus}
+                    key={i}
+                    type={item}
+                    delItem={this.delThisItem.bind(this)}/>)
             : "";
         return (
             <Form layout="horizontal" onSubmit={this.handleSubmit}>
                 <FormItem>
-                    <Button type="primary" onClick={this.showModalAdd}>添加字段</Button>
+                    {
+                        this.state.switchingViewsStatus ? <Button type="primary" onClick={this.showModalAdd}>添加字段</Button>
+                            : ""
+
+                    }
+                    {
+                        this.state.formElements.length === 0 ? "" :
+                    <Button type="primary"
+                            onClick={this.switchingViews.bind(this)}>
+                        {this.state.switchingViewsStatus ? "预览" : "编辑"}
+                    </Button>
+                    }
                     <Modal
                         title="选择创建类型"
                         visible={this.state.visible}
