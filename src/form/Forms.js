@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {setFormElements} from '../action';
 import {Form, Icon, Input, Button, Modal, Radio} from 'antd';
 import FormElement from './FormElement';
 
@@ -11,6 +13,11 @@ function hasErrors(fieldsError) {
 }
 
 class Forms extends Component {
+
+    static defaultProps = {
+        formElements : []
+    };
+
     constructor() {
         super();
         this.state =
@@ -18,7 +25,6 @@ class Forms extends Component {
                 visible: false,
                 value: 1,
                 preview: true,
-                formElements: [],
                 switchingViewsStatus: true
             };
     }
@@ -40,13 +46,13 @@ class Forms extends Component {
     handleOk = (e) => {
         let elem = this.state.value;
 
-        let formElements = this.state.formElements;
+        let formElements = this.props.formElements;
         formElements.push(elem);
 
         this.setState({
             visible: false,
-            formElements: formElements
         });
+        this.props.setFormElements(frameElement);
     }
     handleCancel = (e) => {
         this.setState({
@@ -62,7 +68,7 @@ class Forms extends Component {
     };
 
     delThisItem(key) {
-        let formElements = this.state.formElements.splice(key, 1);
+        let formElements = this.props.formElements.splice(key, 1);
         this.setState({
             ormElements: formElements
         })
@@ -77,8 +83,8 @@ class Forms extends Component {
 
 
     render() {
-        let elems = this.state.formElements.length !== 0
-            ? this.state.formElements.map((item, i) =>
+        let elems = this.props.formElements.length !== 0
+            ? this.props.formElements.map((item, i) =>
                 <FormElement
                     index={i}
                     switchingViewsStatus={this.state.switchingViewsStatus}
@@ -90,16 +96,17 @@ class Forms extends Component {
             <Form layout="horizontal" onSubmit={this.handleSubmit}>
                 <FormItem>
                     {
-                        this.state.switchingViewsStatus ? <Button type="primary" onClick={this.showModalAdd}>添加字段</Button>
+                        this.state.switchingViewsStatus ?
+                            <Button type="primary" onClick={this.showModalAdd}>添加字段</Button>
                             : ""
 
                     }
                     {
-                        this.state.formElements.length === 0 ? "" :
-                    <Button type="primary"
-                            onClick={this.switchingViews.bind(this)}>
-                        {this.state.switchingViewsStatus ? "预览" : "编辑"}
-                    </Button>
+                        this.props.formElements.length === 0 ? "" :
+                            <Button type="primary"
+                                    onClick={this.switchingViews.bind(this)}>
+                                {this.state.switchingViewsStatus ? "预览" : "编辑"}
+                            </Button>
                     }
                     <Modal
                         title="选择创建类型"
@@ -121,4 +128,15 @@ class Forms extends Component {
 
 const WrappedHorizontalLoginForm = Form.create()(Forms);
 
-export default WrappedHorizontalLoginForm;
+const mapStatToProps = state => {
+    return {
+        formElements: state.formElements
+    }
+};
+
+
+const mapDispatchToProps = dispatch => ({
+    setFormElements: data => dispatch(setFormElements(data))
+});
+
+export default connect(mapStatToProps, mapDispatchToProps)(WrappedHorizontalLoginForm);
